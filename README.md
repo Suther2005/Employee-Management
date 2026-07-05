@@ -303,10 +303,8 @@ MIT License — free to use for educational and portfolio purposes.
 
 ## 👤 Author
 
-**Your Name**  
-📧 your.email@example.com  
-🔗 [LinkedIn](https://linkedin.com/in/yourprofile)  
-🐙 [GitHub](https://github.com/yourusername)
+**Sutherson R**  
+🐙 [GitHub](https://github.com/Suther2005)
 
 ---
 
