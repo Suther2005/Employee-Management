@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
+<head><title>My Leaves — Smart EMS</title></head>
+<body>
+<main>
+<div class="ems-card">
+  <div class="ems-card-header">
+    <h5><i class="fas fa-list-check me-2 text-primary"></i>My Leave History</h5>
+    <a th:href="@{/leave/apply}" class="btn-ems btn-primary-ems btn-sm-ems"><i class="fas fa-plus me-1"></i> Apply Leave</a>
+  </div>
+  <div class="ems-card-body">
+    <div class="table-responsive">
+      <table class="ems-table">
+        <thead><tr><th>#</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th><th>Applied On</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr th:if="${#lists.isEmpty(leaves)}">
+            <td colspan="9" class="text-center py-4 text-muted">No leave requests found. <a th:href="@{/leave/apply}">Apply now →</a></td>
+          </tr>
+          <tr th:each="leave, i : ${leaves}">
+            <td th:text="${i.count}">1</td>
+            <td><span class="badge rounded-pill" style="background:rgba(79,142,247,0.12);color:#4f8ef7;font-size:0.75rem" th:text="${leave.leaveType.name()}">CASUAL</span></td>
+            <td th:text="${#temporals.format(leave.startDate, 'dd MMM yy')}">01 Jul</td>
+            <td th:text="${#temporals.format(leave.endDate, 'dd MMM yy')}">03 Jul</td>
+            <td class="fw-600">
+              <span th:text="${#temporals.toJavaUtilDate(leave.endDate).getTime() - #temporals.toJavaUtilDate(leave.startDate).getTime() >= 0 ? (T(java.time.temporal.ChronoUnit).DAYS.between(leave.startDate, leave.endDate) + 1) : 1}">1</span>
+            </td>
+            <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" th:title="${leave.reason}" th:text="${leave.reason}">Reason</td>
+            <td><span class="badge-status" th:classappend="'badge-' + ${#strings.toLowerCase(leave.status.name())}" th:text="${leave.status.name()}">PENDING</span></td>
+            <td th:text="${#temporals.format(leave.appliedDate, 'dd MMM yyyy')}">01 Jul 2026</td>
+            <td>
+              <form th:if="${leave.status.name() == 'PENDING'}"
+                    th:action="@{/leave/cancel/{id}(id=${leave.id})}" method="post" class="confirm-delete" style="display:inline">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit" class="btn-ems btn-danger-ems btn-sm-ems">Cancel</button>
+              </form>
+              <span th:unless="${leave.status.name() == 'PENDING'}" class="text-muted" style="font-size:0.8rem">—</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</main>
+</body>
+</html>

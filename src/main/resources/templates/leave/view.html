@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
+<head><title>Leave Request — Smart EMS</title></head>
+<body>
+<main>
+<div class="row g-3 justify-content-center">
+  <div class="col-lg-7">
+    <div class="ems-card">
+      <div class="ems-card-header">
+        <h5><i class="fas fa-calendar-check me-2 text-primary"></i>Leave Request Details</h5>
+        <a th:href="@{/leave}" class="btn-ems btn-outline-ems btn-sm-ems"><i class="fas fa-arrow-left me-1"></i> Back</a>
+      </div>
+      <div class="ems-card-body">
+        <!-- Employee -->
+        <div class="profile-detail-row">
+          <div class="profile-detail-icon"><i class="fas fa-user"></i></div>
+          <div><div style="font-size:0.75rem;color:var(--text-muted)">Employee</div>
+            <div class="fw-600" th:text="${leave.employee.fullName}">John Doe</div>
+            <div style="font-size:0.8rem;color:var(--text-muted)" th:text="${leave.employee.empId}">EMP001</div></div>
+        </div>
+        <div class="profile-detail-row">
+          <div class="profile-detail-icon"><i class="fas fa-tag"></i></div>
+          <div><div style="font-size:0.75rem;color:var(--text-muted)">Leave Type</div>
+            <span class="badge rounded-pill" style="background:rgba(79,142,247,0.12);color:#4f8ef7" th:text="${leave.leaveType.name()}">CASUAL</span></div>
+        </div>
+        <div class="profile-detail-row">
+          <div class="profile-detail-icon"><i class="fas fa-calendar-range"></i></div>
+          <div><div style="font-size:0.75rem;color:var(--text-muted)">Period</div>
+            <div th:text="${#temporals.format(leave.startDate, 'dd MMM yyyy') + ' → ' + #temporals.format(leave.endDate, 'dd MMM yyyy')}">—</div></div>
+        </div>
+        <div class="profile-detail-row">
+          <div class="profile-detail-icon"><i class="fas fa-align-left"></i></div>
+          <div><div style="font-size:0.75rem;color:var(--text-muted)">Reason</div><div th:text="${leave.reason}">—</div></div>
+        </div>
+        <div class="profile-detail-row">
+          <div class="profile-detail-icon"><i class="fas fa-circle-dot"></i></div>
+          <div><div style="font-size:0.75rem;color:var(--text-muted)">Status</div>
+            <span class="badge-status" th:classappend="'badge-' + ${#strings.toLowerCase(leave.status.name())}" th:text="${leave.status.name()}">PENDING</span>
+          </div>
+        </div>
+        <div class="profile-detail-row" th:if="${leave.rejectionReason != null}">
+          <div class="profile-detail-icon"><i class="fas fa-comment-slash text-danger"></i></div>
+          <div><div style="font-size:0.75rem;color:var(--text-muted)">Rejection Reason</div><div class="text-danger" th:text="${leave.rejectionReason}">—</div></div>
+        </div>
+        <div class="profile-detail-row" th:if="${leave.reviewedBy != null}">
+          <div class="profile-detail-icon"><i class="fas fa-user-check"></i></div>
+          <div><div style="font-size:0.75rem;color:var(--text-muted)">Reviewed By</div><div th:text="${leave.reviewedBy}">—</div></div>
+        </div>
+
+        <!-- Admin Actions -->
+        <div sec:authorize="hasRole('ADMIN')" th:if="${leave.status.name() == 'PENDING'}" class="mt-4 d-flex gap-2">
+          <form th:action="@{/leave/approve/{id}(id=${leave.id})}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="btn-ems btn-success-ems"><i class="fas fa-check me-1"></i> Approve</button>
+          </form>
+          <button type="button" class="btn-ems btn-danger-ems" data-bs-toggle="modal" data-bs-target="#rejectModal">
+            <i class="fas fa-times me-1"></i> Reject
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Reject Modal -->
+<div class="modal fade" id="rejectModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content" style="border-radius:14px;border:none">
+      <div class="modal-header border-0">
+        <h5 class="modal-title">Reject Leave Request</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form th:action="@{/leave/reject/{id}(id=${leave.id})}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <div class="modal-body">
+          <textarea name="rejectionReason" class="form-control" rows="3" required placeholder="Reason for rejection..."></textarea>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn-ems btn-outline-ems" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn-ems btn-danger-ems">Reject</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</main>
+</body>
+</html>

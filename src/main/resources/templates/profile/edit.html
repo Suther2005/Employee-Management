@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
+<head><title>Edit Profile — Smart EMS</title></head>
+<body>
+<main>
+<div class="ems-card" style="max-width:680px;margin:0 auto">
+  <div class="ems-card-header">
+    <h5><i class="fas fa-user-pen me-2 text-primary"></i>Edit Profile</h5>
+    <a th:href="@{/profile}" class="btn-ems btn-outline-ems btn-sm-ems"><i class="fas fa-arrow-left"></i> Back</a>
+  </div>
+  <div class="ems-card-body">
+    <form th:action="@{/profile/update}" method="post" th:object="${employeeDTO}" enctype="multipart/form-data">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+      <input type="hidden" th:field="*{id}"/>
+
+      <!-- Photo Preview -->
+      <div class="text-center mb-4">
+        <img id="photoPreview"
+             th:src="${employee != null and employee.profileImage != null ? '/uploads/' + employee.profileImage : 'https://ui-avatars.com/api/?name=Me&background=4f8ef7&color=fff&size=100'}"
+             class="profile-pic-preview"/>
+        <div>
+          <label for="photo" class="btn-ems btn-outline-ems btn-sm-ems" style="cursor:pointer">
+            <i class="fas fa-camera me-1"></i> Change Photo
+          </label>
+          <input type="file" name="photo" id="photo" accept="image/*" class="d-none"/>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">First Name</label>
+          <input type="text" th:field="*{firstName}" class="form-control"/>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Last Name</label>
+          <input type="text" th:field="*{lastName}" class="form-control"/>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Phone</label>
+          <input type="text" th:field="*{phone}" class="form-control" placeholder="+91 9876543210"/>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Date of Birth</label>
+          <input type="date" th:field="*{dateOfBirth}" class="form-control"/>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Address</label>
+          <textarea th:field="*{address}" class="form-control" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn-ems btn-primary-ems"><i class="fas fa-save me-1"></i> Save Changes</button>
+        <a th:href="@{/profile}" class="btn-ems btn-outline-ems">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+</main>
+</body>
+</html>

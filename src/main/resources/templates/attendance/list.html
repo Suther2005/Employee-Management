@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
+<head><title>Attendance Records — Smart EMS</title></head>
+<body>
+<main>
+<div class="ems-card">
+  <div class="ems-card-header"><h5><i class="fas fa-fingerprint me-2 text-primary"></i>All Attendance Records</h5></div>
+  <div class="ems-card-body">
+    <!-- Filters -->
+    <form th:action="@{/attendance}" method="get" class="row g-2 mb-3">
+      <div class="col-md-4">
+        <select name="employeeId" class="form-select">
+          <option value="">All Employees</option>
+          <option th:each="emp : ${employees}" th:value="${emp.id}" th:text="${emp.fullName}"
+                  th:selected="${selectedEmpId != null and selectedEmpId == emp.id}">John Doe</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <input type="date" name="fromDate" class="form-control" th:value="${fromDate}" placeholder="From Date"/>
+      </div>
+      <div class="col-md-3">
+        <input type="date" name="toDate" class="form-control" th:value="${toDate}" placeholder="To Date"/>
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn-ems btn-primary-ems w-100"><i class="fas fa-filter me-1"></i> Filter</button>
+      </div>
+    </form>
+
+    <div class="table-responsive">
+      <table class="ems-table">
+        <thead><tr><th>#</th><th>Employee</th><th>Date</th><th>Check In</th><th>Check Out</th><th>Hours</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr th:if="${#lists.isEmpty(attendance)}">
+            <td colspan="7" class="text-center py-4 text-muted">No attendance records found.</td>
+          </tr>
+          <tr th:each="att, i : ${attendance}">
+            <td th:text="${(currentPage * 15) + i.count}">1</td>
+            <td>
+              <a th:href="@{/employees/view/{id}(id=${att.employee.id})}" th:text="${att.employee.fullName}"
+                 class="fw-600 text-decoration-none">John Doe</a>
+            </td>
+            <td th:text="${#temporals.format(att.date, 'dd MMM yyyy')}">01 Jul 2026</td>
+            <td>
+              <span class="text-success fw-600" th:text="${att.checkIn ?: '—'}">09:00</span>
+            </td>
+            <td>
+              <span class="text-danger fw-600" th:text="${att.checkOut ?: '—'}">18:00</span>
+            </td>
+            <td th:text="${att.workingHours != null ? #numbers.formatDecimal(att.workingHours, 1, 1) + ' hrs' : '—'}">—</td>
+            <td>
+              <span class="badge-status" th:classappend="'badge-' + ${#strings.toLowerCase(att.status.name())}" th:text="${att.status.name()}">PRESENT</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <small class="text-muted">Total: <b th:text="${totalItems}">0</b> records</small>
+      <div class="pagination-ems" th:if="${totalPages > 1}">
+        <a th:href="@{/attendance(page=${currentPage - 1})}" class="page-btn" th:classappend="${currentPage == 0} ? 'disabled'"><i class="fas fa-angle-left"></i></a>
+        <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+          <a th:href="@{/attendance(page=${i})}" class="page-btn" th:classappend="${i == currentPage} ? 'active'" th:text="${i + 1}">1</a>
+        </th:block>
+        <a th:href="@{/attendance(page=${currentPage + 1})}" class="page-btn" th:classappend="${currentPage == totalPages - 1} ? 'disabled'"><i class="fas fa-angle-right"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+</body>
+</html>

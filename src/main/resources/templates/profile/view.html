@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
+<head><title>My Profile — Smart EMS</title></head>
+<body>
+<main>
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="profile-card-hero">
+      <img th:if="${employee.profileImage != null}"
+           th:src="@{/uploads/{img}(img=${employee.profileImage})}"
+           class="profile-pic-large mx-auto d-block mb-3"/>
+      <div th:unless="${employee.profileImage != null}"
+           style="width:96px;height:96px;border-radius:50%;background:rgba(79,142,247,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2.5rem;font-weight:700;color:#fff"
+           th:text="${#strings.substring(employee.firstName,0,1) + #strings.substring(employee.lastName,0,1)}">JD</div>
+      <h4 class="mb-1" th:text="${employee.fullName}">John Doe</h4>
+      <p style="color:rgba(255,255,255,0.65)" th:text="${employee.designation}">Engineer</p>
+      <span class="badge rounded-pill" style="background:rgba(79,142,247,0.3);color:#fff;padding:5px 14px" th:text="${employee.department != null ? employee.department.name : '—'}">HR</span>
+    </div>
+    <div class="mt-3 d-flex flex-column gap-2">
+      <a th:href="@{/profile/edit}" class="btn-ems btn-primary-ems"><i class="fas fa-pen me-2"></i>Edit Profile</a>
+      <a th:href="@{/profile/change-password}" class="btn-ems btn-outline-ems"><i class="fas fa-lock me-2"></i>Change Password</a>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="ems-card">
+      <div class="ems-card-header"><h5><i class="fas fa-id-card me-2 text-primary"></i>Profile Details</h5></div>
+      <div class="ems-card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <h6 class="text-muted text-uppercase mb-3" style="font-size:0.72rem;letter-spacing:1px">Personal</h6>
+            <div class="profile-detail-row"><div class="profile-detail-icon"><i class="fas fa-envelope"></i></div><div><div style="font-size:0.75rem;color:var(--text-muted)">Email</div><div th:text="${employee.email}">—</div></div></div>
+            <div class="profile-detail-row"><div class="profile-detail-icon"><i class="fas fa-phone"></i></div><div><div style="font-size:0.75rem;color:var(--text-muted)">Phone</div><div th:text="${employee.phone ?: '—'}">—</div></div></div>
+            <div class="profile-detail-row"><div class="profile-detail-icon"><i class="fas fa-venus-mars"></i></div><div><div style="font-size:0.75rem;color:var(--text-muted)">Gender</div><div th:text="${employee.gender != null ? employee.gender.name() : '—'}">—</div></div></div>
+            <div class="profile-detail-row"><div class="profile-detail-icon"><i class="fas fa-cake-candles"></i></div><div><div style="font-size:0.75rem;color:var(--text-muted)">Date of Birth</div><div th:text="${employee.dateOfBirth != null ? #temporals.format(employee.dateOfBirth,'dd MMM yyyy') : '—'}">—</div></div></div>
+            <div class="profile-detail-row"><div class="profile-detail-icon"><i class="fas fa-location-dot"></i></div><div><div style="font-size:0.75rem;color:var(--text-muted)">Address</div><div th:text="${employee.address ?: '—'}">—</div></div></div>
+          </div>
+          <div class="col-md-6">
+            <h6 class="text-muted text-uppercase mb-3" style="font-size:0.72rem;letter-spacing:1px">Job</h6>
+            <div class="profile-detail-row"><div class="profile-detail-icon"><i class="fas fa-id-badge"></i></div><div><div style="font-size:0.75rem;color:var(--text-muted)">Employee ID</div><div th:text="${employee.empId}">—</div></div></div>
+            <div class="profile-detail-row"><div class="profile-detail-icon"><i class="fas fa-briefcase"></i></div><div><div style="font-size:0.75rem;color:var(--text-muted)">Designation</div><div th:text="${employee.designation}">—</div></div></div>
+            <div class="profile-detail-row"><div class="profile-detail-icon"><i class="fas fa-sitemap"></i></div><div><div style="font-size:0.75rem;color:var(--text-muted)">Department</div><div th:text="${employee.department != null ? employee.department.name : '—'}">—</div></div></div>
+            <div class="profile-detail-row"><div class="profile-detail-icon"><i class="fas fa-calendar-plus"></i></div><div><div style="font-size:0.75rem;color:var(--text-muted)">Joining Date</div><div th:text="${employee.joiningDate != null ? #temporals.format(employee.joiningDate,'dd MMM yyyy') : '—'}">—</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+</body>
+</html>

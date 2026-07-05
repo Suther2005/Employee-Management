@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
+<head><title>My Dashboard — Smart EMS</title></head>
+<body>
+<main>
+<!-- Welcome Banner -->
+<div class="profile-card-hero mb-4" style="text-align:left;display:flex;align-items:center;gap:24px">
+  <img th:if="${employee.profileImage != null}" th:src="@{/uploads/{img}(img=${employee.profileImage})}"
+       style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.4)" alt="Photo"/>
+  <div th:unless="${employee.profileImage != null}"
+       style="width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:2rem;color:#fff;font-weight:700;flex-shrink:0"
+       th:text="${#strings.substring(employee.firstName,0,1)+#strings.substring(employee.lastName,0,1)}">JD</div>
+  <div>
+    <h3 style="color:#fff;margin-bottom:4px">Good day, <span th:text="${employee.firstName}">Employee</span>! 👋</h3>
+    <p style="color:rgba(255,255,255,0.65);margin:0" th:text="${employee.designation + ' · ' + (employee.department != null ? employee.department.name : 'N/A')}">Engineer</p>
+    <div class="mt-2 d-flex gap-2">
+      <span class="badge" style="background:rgba(255,255,255,0.15);color:#fff;font-size:0.75rem" th:text="${employee.empId}">EMP0001</span>
+      <span class="badge-status" th:classappend="'badge-' + ${#strings.toLowerCase(employee.status.name())}" th:text="${employee.status.name()}">ACTIVE</span>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row g-3 mb-4">
+  <div class="col-md-3 col-6">
+    <a th:href="@{/attendance/today}" class="quick-card">
+      <div class="quick-card-icon" style="background:rgba(79,142,247,0.12);color:#4f8ef7"><i class="fas fa-fingerprint"></i></div>
+      <div class="fw-600">Mark Attendance</div>
+      <small class="text-muted">Check In / Check Out</small>
+    </a>
+  </div>
+  <div class="col-md-3 col-6">
+    <a th:href="@{/leave/apply}" class="quick-card">
+      <div class="quick-card-icon" style="background:rgba(0,210,160,0.12);color:#00d2a0"><i class="fas fa-paper-plane"></i></div>
+      <div class="fw-600">Apply Leave</div>
+      <small class="text-muted">Submit a leave request</small>
+    </a>
+  </div>
+  <div class="col-md-3 col-6">
+    <a th:href="@{/salary/my-salary}" class="quick-card">
+      <div class="quick-card-icon" style="background:rgba(139,92,246,0.12);color:#8b5cf6"><i class="fas fa-wallet"></i></div>
+      <div class="fw-600">My Salary</div>
+      <small class="text-muted">View salary slip</small>
+    </a>
+  </div>
+  <div class="col-md-3 col-6">
+    <a th:href="@{/profile}" class="quick-card">
+      <div class="quick-card-icon" style="background:rgba(245,158,11,0.12);color:#f59e0b"><i class="fas fa-user-circle"></i></div>
+      <div class="fw-600">My Profile</div>
+      <small class="text-muted">View &amp; edit details</small>
+    </a>
+  </div>
+</div>
+
+<!-- Summary Row -->
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
+      <div class="stat-info">
+        <div class="stat-number" th:text="${todayAttendance != null ? (todayAttendance.checkIn != null ? 'IN' : '—') : '—'}">—</div>
+        <div class="stat-label">Today's Attendance</div>
+        <div class="stat-trend" th:if="${todayAttendance != null and todayAttendance.checkIn != null}" th:text="'Checked in at ' + ${todayAttendance.checkIn}">—</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="stat-icon red"><i class="fas fa-calendar-minus"></i></div>
+      <div class="stat-info">
+        <div class="stat-number" th:text="${pendingLeaves}">0</div>
+        <div class="stat-label">Pending Leave Requests</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="stat-icon teal"><i class="fas fa-money-bill-wave"></i></div>
+      <div class="stat-info">
+        <div class="stat-number" th:text="${salary != null ? '₹' + #numbers.formatDecimal(salary.netSalary, 0, 'COMMA', 0, 'POINT') : '—'}">—</div>
+        <div class="stat-label">Net Salary</div>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+</body>
+</html>

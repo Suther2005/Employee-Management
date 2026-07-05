@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
+<head><title>Departments — Smart EMS</title></head>
+<body>
+<main>
+<div class="ems-card">
+  <div class="ems-card-header">
+    <h5><i class="fas fa-sitemap me-2 text-primary"></i>Departments</h5>
+    <a th:href="@{/departments/add}" class="btn-ems btn-primary-ems"><i class="fas fa-plus"></i> Add Department</a>
+  </div>
+  <div class="ems-card-body">
+    <div class="table-responsive">
+      <table class="ems-table">
+        <thead><tr><th>#</th><th>Department Name</th><th>Head</th><th>Description</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr th:if="${#lists.isEmpty(departments)}">
+            <td colspan="5" class="text-center py-4 text-muted">No departments found.</td>
+          </tr>
+          <tr th:each="dept, i : ${departments}">
+            <td th:text="${i.count}">1</td>
+            <td><span class="fw-600" th:text="${dept.name}">HR</span></td>
+            <td th:text="${dept.head ?: '—'}">—</td>
+            <td th:text="${dept.description != null ? #strings.abbreviate(dept.description, 60) : '—'}">—</td>
+            <td>
+              <div class="action-btns">
+                <a th:href="@{/departments/view/{id}(id=${dept.id})}" class="btn-action view" title="View"><i class="fas fa-eye"></i></a>
+                <a th:href="@{/departments/edit/{id}(id=${dept.id})}" class="btn-action edit" title="Edit"><i class="fas fa-pen"></i></a>
+                <form th:action="@{/departments/delete/{id}(id=${dept.id})}" method="post" class="confirm-delete" style="display:inline">
+                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                  <button type="submit" class="btn-action delete" title="Delete"><i class="fas fa-trash"></i></button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</main>
+</body>
+</html>

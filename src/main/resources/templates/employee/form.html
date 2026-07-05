@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
+<head><title th:text="${pageTitle} + ' — Smart EMS'">Employee Form</title></head>
+<body>
+<main>
+<div class="ems-card">
+  <div class="ems-card-header">
+    <h5><i class="fas fa-user-pen me-2 text-primary"></i><span th:text="${pageTitle}">Employee Form</span></h5>
+    <a th:href="@{/employees}" class="btn-ems btn-outline-ems btn-sm-ems"><i class="fas fa-arrow-left"></i> Back</a>
+  </div>
+  <div class="ems-card-body">
+    <form th:action="${employeeDTO.id != null ? '/employees/update/' + employeeDTO.id : '/employees/save'}"
+          method="post" th:object="${employeeDTO}" enctype="multipart/form-data">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+      <input type="hidden" th:field="*{id}"/>
+
+      <!-- Profile Photo Preview -->
+      <div class="text-center mb-4">
+        <img id="photoPreview"
+             th:src="${employee != null and employee.profileImage != null ? '/uploads/' + employee.profileImage : 'https://ui-avatars.com/api/?name=Employee&background=4f8ef7&color=fff&size=100'}"
+             class="profile-pic-preview"/>
+        <div class="mt-2">
+          <label for="photo" class="btn-ems btn-outline-ems btn-sm-ems" style="cursor:pointer">
+            <i class="fas fa-camera me-1"></i> Upload Photo
+          </label>
+          <input type="file" name="photo" id="photo" accept="image/*" class="d-none"/>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <!-- Personal Info -->
+        <div class="col-12"><h6 class="text-muted text-uppercase fw-700" style="font-size:0.72rem;letter-spacing:1px">Personal Information</h6><hr class="mt-1"/></div>
+
+        <div class="col-md-6">
+          <label class="form-label">First Name *</label>
+          <input type="text" th:field="*{firstName}" class="form-control" th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'" placeholder="John"/>
+          <div class="invalid-feedback" th:errors="*{firstName}"></div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Last Name *</label>
+          <input type="text" th:field="*{lastName}" class="form-control" th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'" placeholder="Doe"/>
+          <div class="invalid-feedback" th:errors="*{lastName}"></div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Email Address *</label>
+          <input type="email" th:field="*{email}" class="form-control" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" placeholder="john@company.com"/>
+          <div class="invalid-feedback" th:errors="*{email}"></div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Phone Number</label>
+          <input type="text" th:field="*{phone}" class="form-control" th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid'" placeholder="+91 9876543210"/>
+          <div class="invalid-feedback" th:errors="*{phone}"></div>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Gender</label>
+          <select th:field="*{gender}" class="form-select">
+            <option value="">Select Gender</option>
+            <option th:each="g : ${genders}" th:value="${g}" th:text="${g.name()}">MALE</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Date of Birth</label>
+          <input type="date" th:field="*{dateOfBirth}" class="form-control"/>
+        </div>
+
+        <!-- Job Info -->
+        <div class="col-12 mt-2"><h6 class="text-muted text-uppercase fw-700" style="font-size:0.72rem;letter-spacing:1px">Job Information</h6><hr class="mt-1"/></div>
+
+        <div class="col-md-4">
+          <label class="form-label">Employee ID *</label>
+          <input type="text" th:field="*{empId}" class="form-control" th:classappend="${#fields.hasErrors('empId')} ? 'is-invalid'" placeholder="EMP0001"/>
+          <div class="invalid-feedback" th:errors="*{empId}"></div>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Designation *</label>
+          <input type="text" th:field="*{designation}" class="form-control" th:classappend="${#fields.hasErrors('designation')} ? 'is-invalid'" placeholder="Software Engineer"/>
+          <div class="invalid-feedback" th:errors="*{designation}"></div>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Department *</label>
+          <select th:field="*{departmentId}" class="form-select" th:classappend="${#fields.hasErrors('departmentId')} ? 'is-invalid'">
+            <option value="">Select Department</option>
+            <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.name}">HR</option>
+          </select>
+          <div class="invalid-feedback" th:errors="*{departmentId}"></div>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Joining Date</label>
+          <input type="date" th:field="*{joiningDate}" class="form-control"/>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Status</label>
+          <select th:field="*{status}" class="form-select">
+            <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.name()}">ACTIVE</option>
+          </select>
+        </div>
+
+        <!-- Password (new only) -->
+        <div class="col-md-4" th:if="${employeeDTO.id == null}">
+          <label class="form-label">Login Password</label>
+          <input type="password" id="password" th:field="*{password}" class="form-control" placeholder="Min 8 characters"/>
+          <div class="strength-bar mt-1"><div class="strength-fill" id="strengthFill"></div></div>
+          <small class="text-muted" id="strengthText"></small>
+        </div>
+
+        <!-- Address -->
+        <div class="col-12">
+          <label class="form-label">Address</label>
+          <textarea th:field="*{address}" class="form-control" rows="2" placeholder="Full residential address"></textarea>
+        </div>
+      </div>
+
+      <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn-ems btn-primary-ems">
+          <i class="fas fa-save me-1"></i> <span th:text="${employeeDTO.id != null ? 'Update Employee' : 'Save Employee'}">Save</span>
+        </button>
+        <a th:href="@{/employees}" class="btn-ems btn-outline-ems">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+</main>
+</body>
+</html>

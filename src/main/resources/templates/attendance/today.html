@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
+<head><title>Mark Attendance — Smart EMS</title></head>
+<body>
+<main>
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="checkin-card mb-3">
+      <div class="clock-display" id="liveClock">00:00:00</div>
+      <div class="date-display mt-2" th:text="${#temporals.format(#temporals.createNow(), 'EEEE, dd MMMM yyyy')}">Today</div>
+    </div>
+
+    <!-- NOT CHECKED IN -->
+    <div th:if="${!hasCheckedIn}">
+      <div class="ems-card">
+        <div class="ems-card-body text-center py-4">
+          <div style="width:72px;height:72px;background:rgba(0,210,160,0.12);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2rem;color:#00d2a0">
+            <i class="fas fa-door-open"></i>
+          </div>
+          <h5 class="mb-2">You haven't checked in yet</h5>
+          <p class="text-muted mb-4">Click the button below to mark your attendance for today.</p>
+          <form th:action="@{/attendance/checkin}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="btn-ems btn-success-ems" style="font-size:1rem;padding:12px 32px">
+              <i class="fas fa-fingerprint me-2"></i> Check In Now
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHECKED IN BUT NOT OUT -->
+    <div th:if="${hasCheckedIn and !hasCheckedOut}">
+      <div class="ems-card">
+        <div class="ems-card-body text-center py-4">
+          <div style="width:72px;height:72px;background:rgba(245,158,11,0.12);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2rem;color:#f59e0b">
+            <i class="fas fa-clock"></i>
+          </div>
+          <span class="badge-status badge-present mb-2">Checked In</span>
+          <h5 class="mb-1">You're on the clock!</h5>
+          <p class="text-muted mb-1">Check-in time:
+            <strong class="text-success" th:text="${attendance.checkIn}">09:00</strong>
+          </p>
+          <p class="text-muted mb-4">Remember to check out when you leave.</p>
+          <form th:action="@{/attendance/checkout}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="btn-ems btn-outline-ems" style="font-size:1rem;padding:12px 32px">
+              <i class="fas fa-right-from-bracket me-2"></i> Check Out
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHECKED OUT -->
+    <div th:if="${hasCheckedOut}">
+      <div class="ems-card">
+        <div class="ems-card-body text-center py-4">
+          <div style="width:72px;height:72px;background:rgba(79,142,247,0.12);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2rem;color:#4f8ef7">
+            <i class="fas fa-circle-check"></i>
+          </div>
+          <span class="badge-status badge-present mb-2">Completed</span>
+          <h5 class="mb-3">Attendance Recorded</h5>
+          <div class="row g-3 mb-3">
+            <div class="col-4">
+              <div style="background:var(--bg);border-radius:10px;padding:14px">
+                <div style="font-size:0.72rem;color:var(--text-muted)">CHECK IN</div>
+                <div class="fw-600 text-success" th:text="${attendance.checkIn}">09:00</div>
+              </div>
+            </div>
+            <div class="col-4">
+              <div style="background:var(--bg);border-radius:10px;padding:14px">
+                <div style="font-size:0.72rem;color:var(--text-muted)">CHECK OUT</div>
+                <div class="fw-600 text-danger" th:text="${attendance.checkOut}">18:00</div>
+              </div>
+            </div>
+            <div class="col-4">
+              <div style="background:var(--bg);border-radius:10px;padding:14px">
+                <div style="font-size:0.72rem;color:var(--text-muted)">HOURS</div>
+                <div class="fw-600 text-primary" th:text="${#numbers.formatDecimal(attendance.workingHours, 1, 1)} + ' hrs'">9.0 hrs</div>
+              </div>
+            </div>
+          </div>
+          <a th:href="@{/attendance/my-history}" class="btn-ems btn-outline-ems btn-sm-ems">View History</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,240 @@
+{
+  "info": {
+    "name": "Smart Employee Management System API",
+    "description": "Complete Postman collection for the Smart EMS Spring Boot application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080", "type": "string" },
+    { "key": "jsessionid", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login as Admin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "username", "value": "admin@ems.com" },
+                { "key": "password", "value": "Admin@123" }
+              ]
+            },
+            "url": "{{baseUrl}}/login",
+            "description": "Login as admin. Copy JSESSIONID from response cookies."
+          }
+        },
+        {
+          "name": "Login as Employee",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "username", "value": "john.doe@ems.com" },
+                { "key": "password", "value": "Employee@123" }
+              ]
+            },
+            "url": "{{baseUrl}}/login"
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/logout"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Admin Dashboard",
+          "request": { "method": "GET", "url": "{{baseUrl}}/dashboard" }
+        }
+      ]
+    },
+    {
+      "name": "Employees",
+      "item": [
+        {
+          "name": "List Employees",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/employees?keyword=&page=0&size=10&sortBy=firstName&sortDir=asc",
+              "host": ["{{baseUrl}}"],
+              "path": ["employees"],
+              "query": [
+                { "key": "keyword", "value": "" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" },
+                { "key": "sortBy", "value": "firstName" },
+                { "key": "sortDir", "value": "asc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Employees",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/employees?keyword=john&page=0&size=10"
+          }
+        },
+        {
+          "name": "View Employee",
+          "request": { "method": "GET", "url": "{{baseUrl}}/employees/view/1" }
+        },
+        {
+          "name": "Add Employee Form",
+          "request": { "method": "GET", "url": "{{baseUrl}}/employees/add" }
+        },
+        {
+          "name": "Edit Employee Form",
+          "request": { "method": "GET", "url": "{{baseUrl}}/employees/edit/1" }
+        }
+      ]
+    },
+    {
+      "name": "Departments",
+      "item": [
+        {
+          "name": "List Departments",
+          "request": { "method": "GET", "url": "{{baseUrl}}/departments" }
+        },
+        {
+          "name": "View Department",
+          "request": { "method": "GET", "url": "{{baseUrl}}/departments/view/1" }
+        }
+      ]
+    },
+    {
+      "name": "Attendance",
+      "item": [
+        {
+          "name": "Today Attendance",
+          "request": { "method": "GET", "url": "{{baseUrl}}/attendance/today" }
+        },
+        {
+          "name": "Check In",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/attendance/checkin",
+            "description": "Requires CSRF token. Works via browser session."
+          }
+        },
+        {
+          "name": "Check Out",
+          "request": { "method": "POST", "url": "{{baseUrl}}/attendance/checkout" }
+        },
+        {
+          "name": "All Attendance (Admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/attendance?page=0&size=15"
+          }
+        },
+        {
+          "name": "Filter Attendance by Date",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/attendance?fromDate=2026-07-01&toDate=2026-07-31&page=0&size=15"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Leave Management",
+      "item": [
+        {
+          "name": "All Leave Requests (Admin)",
+          "request": { "method": "GET", "url": "{{baseUrl}}/leave" }
+        },
+        {
+          "name": "My Leaves (Employee)",
+          "request": { "method": "GET", "url": "{{baseUrl}}/leave/my-leaves" }
+        },
+        {
+          "name": "Apply Leave Form",
+          "request": { "method": "GET", "url": "{{baseUrl}}/leave/apply" }
+        },
+        {
+          "name": "View Leave Detail",
+          "request": { "method": "GET", "url": "{{baseUrl}}/leave/view/1" }
+        }
+      ]
+    },
+    {
+      "name": "Salary",
+      "item": [
+        {
+          "name": "All Salaries (Admin)",
+          "request": { "method": "GET", "url": "{{baseUrl}}/salary" }
+        },
+        {
+          "name": "My Salary (Employee)",
+          "request": { "method": "GET", "url": "{{baseUrl}}/salary/my-salary" }
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "Reports Page",
+          "request": { "method": "GET", "url": "{{baseUrl}}/reports" }
+        },
+        {
+          "name": "Export Employees (Excel)",
+          "request": { "method": "GET", "url": "{{baseUrl}}/reports/employees/excel" }
+        },
+        {
+          "name": "Export Employees (PDF)",
+          "request": { "method": "GET", "url": "{{baseUrl}}/reports/employees/pdf" }
+        },
+        {
+          "name": "Export Salary (Excel)",
+          "request": { "method": "GET", "url": "{{baseUrl}}/reports/salary/excel" }
+        },
+        {
+          "name": "Export Salary (PDF)",
+          "request": { "method": "GET", "url": "{{baseUrl}}/reports/salary/pdf" }
+        },
+        {
+          "name": "Export Leave (Excel)",
+          "request": { "method": "GET", "url": "{{baseUrl}}/reports/leave/excel" }
+        },
+        {
+          "name": "Export Leave (PDF)",
+          "request": { "method": "GET", "url": "{{baseUrl}}/reports/leave/pdf" }
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "View Profile",
+          "request": { "method": "GET", "url": "{{baseUrl}}/profile" }
+        },
+        {
+          "name": "Edit Profile Form",
+          "request": { "method": "GET", "url": "{{baseUrl}}/profile/edit" }
+        },
+        {
+          "name": "Change Password Form",
+          "request": { "method": "GET", "url": "{{baseUrl}}/profile/change-password" }
+        }
+      ]
+    }
+  ]
+}

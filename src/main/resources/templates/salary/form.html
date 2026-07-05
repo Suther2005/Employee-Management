@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
+<head><title th:text="${pageTitle} + ' — Smart EMS'">Salary Form</title></head>
+<body>
+<main>
+<div class="ems-card" style="max-width:720px;margin:0 auto">
+  <div class="ems-card-header">
+    <h5><i class="fas fa-money-bill-wave me-2 text-primary"></i><span th:text="${pageTitle}">Salary Form</span></h5>
+    <a th:href="@{/salary}" class="btn-ems btn-outline-ems btn-sm-ems"><i class="fas fa-arrow-left"></i> Back</a>
+  </div>
+  <div class="ems-card-body">
+    <form th:action="${salaryDTO.id != null ? '/salary/update/' + salaryDTO.id : '/salary/save'}"
+          method="post" th:object="${salaryDTO}">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+      <input type="hidden" th:field="*{id}"/>
+
+      <div class="mb-3">
+        <label class="form-label">Employee *</label>
+        <select th:field="*{employeeId}" class="form-select" th:classappend="${#fields.hasErrors('employeeId')} ? 'is-invalid'" th:disabled="${salaryDTO.id != null}">
+          <option value="">Select Employee</option>
+          <option th:each="emp : ${employees}" th:value="${emp.id}" th:text="${emp.fullName + ' (' + emp.empId + ')'}">John Doe</option>
+        </select>
+        <div class="invalid-feedback" th:errors="*{employeeId}"></div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Month</label>
+          <select th:field="*{month}" class="form-select">
+            <option value="">Select Month</option>
+            <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+            <option value="4">April</option><option value="5">May</option><option value="6">June</option>
+            <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+            <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Year</label>
+          <input type="number" th:field="*{year}" class="form-control" placeholder="2026" min="2000" max="2100"/>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <label class="form-label">Basic Salary (₹) *</label>
+          <input type="number" id="basicSalary" th:field="*{basicSalary}" class="form-control" th:classappend="${#fields.hasErrors('basicSalary')} ? 'is-invalid'" placeholder="50000" step="0.01" min="0"/>
+          <div class="invalid-feedback" th:errors="*{basicSalary}"></div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Allowance (₹)</label>
+          <input type="number" id="allowance" th:field="*{allowance}" class="form-control" placeholder="10000" step="0.01" min="0"/>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Bonus (₹)</label>
+          <input type="number" id="bonus" th:field="*{bonus}" class="form-control" placeholder="0" step="0.01" min="0"/>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Deductions (₹)</label>
+          <input type="number" id="deductions" th:field="*{deductions}" class="form-control" placeholder="0" step="0.01" min="0"/>
+        </div>
+      </div>
+
+      <!-- Net Salary Preview -->
+      <div style="background:linear-gradient(135deg,rgba(79,142,247,0.08),rgba(99,102,241,0.08));border:1px solid rgba(79,142,247,0.2);border-radius:12px;padding:20px;text-align:center;margin-bottom:24px">
+        <div style="font-size:0.8rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:1px">Calculated Net Salary</div>
+        <div id="netSalaryDisplay" style="font-size:2rem;font-weight:800;color:#4f8ef7">₹ 0.00</div>
+        <div style="font-size:0.75rem;color:var(--text-muted)">Basic + Allowance + Bonus − Deductions</div>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn-ems btn-primary-ems"><i class="fas fa-save me-1"></i>
+          <span th:text="${salaryDTO.id != null ? 'Update Salary' : 'Save Salary Record'}">Save</span>
+        </button>
+        <a th:href="@{/salary}" class="btn-ems btn-outline-ems">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+</main>
+</body>
+</html>

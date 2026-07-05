@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
+<head><title>My Attendance History — Smart EMS</title></head>
+<body>
+<main>
+<div class="ems-card">
+  <div class="ems-card-header">
+    <h5><i class="fas fa-calendar-days me-2 text-primary"></i>My Attendance History</h5>
+    <a th:href="@{/attendance/today}" class="btn-ems btn-primary-ems btn-sm-ems"><i class="fas fa-fingerprint me-1"></i> Today</a>
+  </div>
+  <div class="ems-card-body">
+    <div class="table-responsive">
+      <table class="ems-table">
+        <thead><tr><th>#</th><th>Date</th><th>Check In</th><th>Check Out</th><th>Working Hours</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr th:if="${#lists.isEmpty(attendance)}">
+            <td colspan="6" class="text-center py-4 text-muted">No attendance records found.</td>
+          </tr>
+          <tr th:each="att, i : ${attendance}">
+            <td th:text="${(currentPage * 20) + i.count}">1</td>
+            <td class="fw-600" th:text="${#temporals.format(att.date, 'EEE, dd MMM yyyy')}">Mon, 01 Jul 2026</td>
+            <td><span class="text-success fw-600" th:text="${att.checkIn ?: '—'}">09:00</span></td>
+            <td><span class="text-danger fw-600" th:text="${att.checkOut ?: '—'}">18:00</span></td>
+            <td>
+              <div th:if="${att.workingHours != null}" class="d-flex align-items-center gap-2">
+                <div style="height:6px;width:80px;background:var(--border);border-radius:99px;overflow:hidden">
+                  <div th:style="'width:' + ${#numbers.formatDecimal(att.workingHours / 9.0 * 100, 1, 0)} + '%;background:#00d2a0;height:100%;border-radius:99px'"></div>
+                </div>
+                <span th:text="${#numbers.formatDecimal(att.workingHours, 1, 1)} + ' hrs'">9.0 hrs</span>
+              </div>
+              <span th:unless="${att.workingHours != null}" class="text-muted">—</span>
+            </td>
+            <td><span class="badge-status" th:classappend="'badge-' + ${#strings.toLowerCase(att.status.name())}" th:text="${att.status.name()}">PRESENT</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="d-flex justify-content-between mt-3">
+      <span></span>
+      <div class="pagination-ems" th:if="${totalPages > 1}">
+        <a th:href="@{/attendance/my-history(page=${currentPage - 1})}" class="page-btn" th:classappend="${currentPage == 0} ? 'disabled'"><i class="fas fa-angle-left"></i></a>
+        <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+          <a th:href="@{/attendance/my-history(page=${i})}" class="page-btn" th:classappend="${i == currentPage} ? 'active'" th:text="${i + 1}">1</a>
+        </th:block>
+        <a th:href="@{/attendance/my-history(page=${currentPage + 1})}" class="page-btn" th:classappend="${currentPage == totalPages - 1} ? 'disabled'"><i class="fas fa-angle-right"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
+<head><title>Reports — Smart EMS</title></head>
+<body>
+<main>
+<div class="row g-3">
+  <!-- Employee Reports -->
+  <div class="col-md-4">
+    <div class="report-card">
+      <div class="report-icon" style="background:rgba(79,142,247,0.12);color:#4f8ef7"><i class="fas fa-users"></i></div>
+      <h5 class="mb-1">Employee Report</h5>
+      <p class="text-muted mb-4" style="font-size:0.85rem">Export complete employee directory with all details</p>
+      <div class="d-flex gap-2">
+        <a th:href="@{/reports/employees/excel}" class="btn-ems btn-success-ems flex-fill" style="justify-content:center">
+          <i class="fas fa-file-excel me-1"></i> Excel
+        </a>
+        <a th:href="@{/reports/employees/pdf}" class="btn-ems btn-danger-ems flex-fill" style="justify-content:center">
+          <i class="fas fa-file-pdf me-1"></i> PDF
+        </a>
+      </div>
+    </div>
+  </div>
+  <!-- Salary Reports -->
+  <div class="col-md-4">
+    <div class="report-card">
+      <div class="report-icon" style="background:rgba(0,210,160,0.12);color:#00d2a0"><i class="fas fa-money-bill-wave"></i></div>
+      <h5 class="mb-1">Salary Report</h5>
+      <p class="text-muted mb-4" style="font-size:0.85rem">Export salary breakdown for all employees</p>
+      <div class="d-flex gap-2">
+        <a th:href="@{/reports/salary/excel}" class="btn-ems btn-success-ems flex-fill" style="justify-content:center">
+          <i class="fas fa-file-excel me-1"></i> Excel
+        </a>
+        <a th:href="@{/reports/salary/pdf}" class="btn-ems btn-danger-ems flex-fill" style="justify-content:center">
+          <i class="fas fa-file-pdf me-1"></i> PDF
+        </a>
+      </div>
+    </div>
+  </div>
+  <!-- Leave Reports -->
+  <div class="col-md-4">
+    <div class="report-card">
+      <div class="report-icon" style="background:rgba(139,92,246,0.12);color:#8b5cf6"><i class="fas fa-calendar-check"></i></div>
+      <h5 class="mb-1">Leave Report</h5>
+      <p class="text-muted mb-4" style="font-size:0.85rem">Export all leave requests with approval status</p>
+      <div class="d-flex gap-2">
+        <a th:href="@{/reports/leave/excel}" class="btn-ems btn-success-ems flex-fill" style="justify-content:center">
+          <i class="fas fa-file-excel me-1"></i> Excel
+        </a>
+        <a th:href="@{/reports/leave/pdf}" class="btn-ems btn-danger-ems flex-fill" style="justify-content:center">
+          <i class="fas fa-file-pdf me-1"></i> PDF
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+</body>
+</html>

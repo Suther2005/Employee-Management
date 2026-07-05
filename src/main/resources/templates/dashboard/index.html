@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
+<head><title>Dashboard — Smart EMS</title></head>
+<body>
+<main>
+<!-- ============ STAT CARDS ============ -->
+<div class="row g-3 mb-4">
+  <div class="col-xl-2 col-md-4 col-6">
+    <div class="stat-card">
+      <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+      <div class="stat-info">
+        <div class="stat-number" th:text="${stats.totalEmployees}">0</div>
+        <div class="stat-label">Total Employees</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-2 col-md-4 col-6">
+    <div class="stat-card">
+      <div class="stat-icon teal"><i class="fas fa-user-check"></i></div>
+      <div class="stat-info">
+        <div class="stat-number" th:text="${stats.activeEmployees}">0</div>
+        <div class="stat-label">Active</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-2 col-md-4 col-6">
+    <div class="stat-card">
+      <div class="stat-icon purple"><i class="fas fa-sitemap"></i></div>
+      <div class="stat-info">
+        <div class="stat-number" th:text="${stats.totalDepartments}">0</div>
+        <div class="stat-label">Departments</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-2 col-md-4 col-6">
+    <div class="stat-card">
+      <div class="stat-icon orange"><i class="fas fa-fingerprint"></i></div>
+      <div class="stat-info">
+        <div class="stat-number" th:text="${stats.todayAttendance}">0</div>
+        <div class="stat-label">Today Present</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-2 col-md-4 col-6">
+    <div class="stat-card">
+      <div class="stat-icon red"><i class="fas fa-calendar-xmark"></i></div>
+      <div class="stat-info">
+        <div class="stat-number" th:text="${stats.pendingLeaves}">0</div>
+        <div class="stat-label">Pending Leaves</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-2 col-md-4 col-6">
+    <div class="stat-card">
+      <div class="stat-icon indigo"><i class="fas fa-user-plus"></i></div>
+      <div class="stat-info">
+        <div class="stat-number" th:text="${stats.monthlyNewEmployees}">0</div>
+        <div class="stat-label">New This Month</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CHARTS ============ -->
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="chart-card">
+      <div class="chart-title"><i class="fas fa-chart-bar me-2 text-primary"></i>Department-wise Employee Count</div>
+      <div class="chart-container"><canvas id="deptChart"></canvas></div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="chart-card">
+      <div class="chart-title"><i class="fas fa-chart-line me-2 text-success"></i>Monthly Joining Trend</div>
+      <div class="chart-container"><canvas id="trendChart"></canvas></div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="chart-card">
+      <div class="chart-title"><i class="fas fa-chart-pie me-2 text-purple"></i>Leave Type Breakdown</div>
+      <div class="chart-container"><canvas id="leaveChart"></canvas></div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="chart-card">
+      <div class="chart-title">
+        <i class="fas fa-circle-check me-2 text-success"></i>Today's Attendance
+        <span class="ms-2 badge" style="background:rgba(0,210,160,0.15);color:#00a87e;font-size:0.8rem"
+              th:text="${stats.attendancePercentageToday + '%'}">0%</span>
+      </div>
+      <div class="chart-container"><canvas id="attendanceChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- Chart Init -->
+<script th:inline="javascript">
+  const deptLabels = /*[[${deptLabels}]]*/ '[]';
+  const deptData   = /*[[${deptData}]]*/ '[]';
+  const trendLabels = /*[[${trendLabels}]]*/ '[]';
+  const trendData   = /*[[${trendData}]]*/ '[]';
+  const leaveLabels = /*[[${leaveLabels}]]*/ '[]';
+  const leaveData   = /*[[${leaveData}]]*/ '[]';
+  const presentCount = /*[[${stats.todayAttendance}]]*/ 0;
+  const totalCount   = /*[[${stats.totalEmployees}]]*/ 0;
+
+  document.addEventListener('DOMContentLoaded', function() {
+    initDeptChart(JSON.parse(deptLabels), JSON.parse(deptData));
+    initTrendChart(JSON.parse(trendLabels), JSON.parse(trendData));
+    initLeaveChart(JSON.parse(leaveLabels), JSON.parse(leaveData));
+    initAttendancePieChart(presentCount, totalCount);
+  });
+</script>
+</main>
+</body>
+</html>

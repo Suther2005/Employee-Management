@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
+<head><title>Employees — Smart EMS</title></head>
+<body>
+<main>
+<div class="ems-card">
+  <div class="ems-card-header">
+    <h5><i class="fas fa-users me-2 text-primary"></i>Employee Directory</h5>
+    <a th:href="@{/employees/add}" class="btn-ems btn-primary-ems">
+      <i class="fas fa-plus"></i> Add Employee
+    </a>
+  </div>
+  <div class="ems-card-body">
+    <!-- Search & Filter -->
+    <form th:action="@{/employees}" method="get" class="d-flex gap-2 mb-3 flex-wrap">
+      <div class="search-bar flex-grow-1">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" name="keyword" class="form-control"
+               placeholder="Search by name, email, ID, department..." th:value="${keyword}"/>
+      </div>
+      <select name="size" class="form-select" style="width:auto" onchange="this.form.submit()">
+        <option value="10" th:selected="${size == 10}">10 / page</option>
+        <option value="25" th:selected="${size == 25}">25 / page</option>
+        <option value="50" th:selected="${size == 50}">50 / page</option>
+      </select>
+    </form>
+
+    <!-- Table -->
+    <div class="table-responsive">
+      <table class="ems-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th><a th:href="@{/employees(keyword=${keyword},sortBy='empId',sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}" class="text-decoration-none text-inherit">Emp ID <i class="fas fa-sort ms-1 text-muted"></i></a></th>
+            <th>Photo</th>
+            <th><a th:href="@{/employees(keyword=${keyword},sortBy='firstName',sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}" class="text-decoration-none text-inherit">Name <i class="fas fa-sort ms-1 text-muted"></i></a></th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Designation</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:if="${#lists.isEmpty(employees)}">
+            <td colspan="9" class="text-center py-5">
+              <i class="fas fa-users-slash fa-2x text-muted mb-2 d-block"></i>
+              <span class="text-muted">No employees found.</span>
+              <a th:href="@{/employees/add}" class="d-block mt-2 text-primary">Add the first employee</a>
+            </td>
+          </tr>
+          <tr th:each="emp, iter : ${employees}">
+            <td th:text="${(currentPage * 10) + iter.count}">1</td>
+            <td><span class="badge bg-light text-dark fw-600" th:text="${emp.empId}">EMP001</span></td>
+            <td>
+              <img th:if="${emp.profileImage != null}" th:src="@{/uploads/{img}(img=${emp.profileImage})}"
+                   class="emp-avatar" alt="Photo"/>
+              <div th:unless="${emp.profileImage != null}" class="emp-avatar-placeholder"
+                   th:text="${#strings.substring(emp.firstName,0,1) + #strings.substring(emp.lastName,0,1)}">JD</div>
+            </td>
+            <td>
+              <span class="fw-600" th:text="${emp.fullName}">John Doe</span>
+            </td>
+            <td th:text="${emp.email}">john@ems.com</td>
+            <td>
+              <span class="badge rounded-pill" style="background:rgba(79,142,247,0.12);color:#4f8ef7"
+                    th:text="${emp.department != null ? emp.department.name : '—'}">Engineering</span>
+            </td>
+            <td th:text="${emp.designation}">Developer</td>
+            <td>
+              <span class="badge-status"
+                    th:classappend="'badge-' + ${#strings.toLowerCase(emp.status.name())}"
+                    th:text="${emp.status.name()}">ACTIVE</span>
+            </td>
+            <td>
+              <div class="action-btns">
+                <a th:href="@{/employees/view/{id}(id=${emp.id})}" class="btn-action view" title="View"><i class="fas fa-eye"></i></a>
+                <a th:href="@{/employees/edit/{id}(id=${emp.id})}" class="btn-action edit" title="Edit"><i class="fas fa-pen"></i></a>
+                <form th:action="@{/employees/delete/{id}(id=${emp.id})}" method="post" class="confirm-delete" style="display:inline">
+                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                  <button type="submit" class="btn-action delete" title="Delete"><i class="fas fa-trash"></i></button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+      <small class="text-muted">
+        Showing <b th:text="${employees.size()}">0</b> of <b th:text="${totalItems}">0</b> employees
+      </small>
+      <div class="pagination-ems" th:if="${totalPages > 1}">
+        <a th:href="@{/employees(keyword=${keyword},page=0,size=${size},sortBy=${sortBy},sortDir=${sortDir})}"
+           class="page-btn" th:classappend="${currentPage == 0} ? 'disabled'">
+          <i class="fas fa-angles-left"></i>
+        </a>
+        <a th:href="@{/employees(keyword=${keyword},page=${currentPage - 1},size=${size},sortBy=${sortBy},sortDir=${sortDir})}"
+           class="page-btn" th:classappend="${currentPage == 0} ? 'disabled'">
+          <i class="fas fa-angle-left"></i>
+        </a>
+        <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+          <a th:href="@{/employees(keyword=${keyword},page=${i},size=${size},sortBy=${sortBy},sortDir=${sortDir})}"
+             class="page-btn" th:classappend="${i == currentPage} ? 'active'" th:text="${i + 1}">1</a>
+        </th:block>
+        <a th:href="@{/employees(keyword=${keyword},page=${currentPage + 1},size=${size},sortBy=${sortBy},sortDir=${sortDir})}"
+           class="page-btn" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+          <i class="fas fa-angle-right"></i>
+        </a>
+        <a th:href="@{/employees(keyword=${keyword},page=${totalPages - 1},size=${size},sortBy=${sortBy},sortDir=${sortDir})}"
+           class="page-btn" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+          <i class="fas fa-angles-right"></i>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+</main>
+</body>
+</html>

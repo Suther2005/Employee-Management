@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
+<head><title>My Salary — Smart EMS</title></head>
+<body>
+<main>
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div th:if="${salary == null}" class="ems-card">
+      <div class="ems-card-body text-center py-5">
+        <i class="fas fa-file-invoice-dollar fa-3x text-muted mb-3"></i>
+        <h5>No Salary Record Found</h5>
+        <p class="text-muted">Your salary details have not been assigned yet. Please contact HR.</p>
+      </div>
+    </div>
+
+    <div th:unless="${salary == null}">
+      <div class="salary-slip">
+        <!-- Slip Header -->
+        <div class="salary-slip-header">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h4 class="mb-1">Salary Slip</h4>
+              <p style="color:rgba(255,255,255,0.65);margin:0"
+                 th:text="${salary.month != null ? 'Month: ' + salary.month + ' / ' + salary.year : 'Current Period'}">Jul 2026</p>
+            </div>
+            <div class="text-end">
+              <div style="color:rgba(255,255,255,0.65);font-size:0.8rem">Smart EMS</div>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.45)" th:text="${employee.empId}">EMP001</div>
+            </div>
+          </div>
+          <hr style="border-color:rgba(255,255,255,0.15);margin:16px 0"/>
+          <div class="row">
+            <div class="col-6">
+              <div style="color:rgba(255,255,255,0.55);font-size:0.72rem">EMPLOYEE NAME</div>
+              <div class="fw-600" th:text="${employee.fullName}">John Doe</div>
+            </div>
+            <div class="col-6">
+              <div style="color:rgba(255,255,255,0.55);font-size:0.72rem">DESIGNATION</div>
+              <div th:text="${employee.designation}">Engineer</div>
+            </div>
+            <div class="col-6 mt-2">
+              <div style="color:rgba(255,255,255,0.55);font-size:0.72rem">DEPARTMENT</div>
+              <div th:text="${employee.department != null ? employee.department.name : '—'}">HR</div>
+            </div>
+            <div class="col-6 mt-2">
+              <div style="color:rgba(255,255,255,0.55);font-size:0.72rem">JOINING DATE</div>
+              <div th:text="${employee.joiningDate != null ? #temporals.format(employee.joiningDate,'dd MMM yyyy') : '—'}">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Earnings -->
+        <div class="px-0 py-1" style="background:var(--bg-card)">
+          <div class="salary-row" style="background:rgba(0,210,160,0.04)">
+            <span class="salary-label fw-600" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px">Earnings</span>
+            <span class="salary-label fw-600" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px">Amount</span>
+          </div>
+          <div class="salary-row">
+            <span class="salary-label">Basic Salary</span>
+            <span class="salary-amount positive" th:text="'₹ ' + ${#numbers.formatDecimal(salary.basicSalary, 0, 'COMMA', 2, 'POINT')}">₹ 0</span>
+          </div>
+          <div class="salary-row">
+            <span class="salary-label">Allowance</span>
+            <span class="salary-amount positive" th:text="'₹ ' + ${#numbers.formatDecimal(salary.allowance, 0, 'COMMA', 2, 'POINT')}">₹ 0</span>
+          </div>
+          <div class="salary-row">
+            <span class="salary-label">Bonus</span>
+            <span class="salary-amount positive" th:text="'₹ ' + ${#numbers.formatDecimal(salary.bonus, 0, 'COMMA', 2, 'POINT')}">₹ 0</span>
+          </div>
+
+          <!-- Deductions -->
+          <div class="salary-row mt-1" style="background:rgba(239,68,68,0.04)">
+            <span class="salary-label fw-600" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px">Deductions</span>
+            <span></span>
+          </div>
+          <div class="salary-row">
+            <span class="salary-label">Total Deductions</span>
+            <span class="salary-amount negative" th:text="'− ₹ ' + ${#numbers.formatDecimal(salary.deductions, 0, 'COMMA', 2, 'POINT')}">₹ 0</span>
+          </div>
+
+          <!-- Net -->
+          <div class="salary-row total">
+            <span style="font-size:1rem">💰 Net Salary</span>
+            <span class="salary-amount net" th:text="'₹ ' + ${#numbers.formatDecimal(salary.netSalary, 0, 'COMMA', 2, 'POINT')}">₹ 0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Print -->
+      <div class="mt-3 d-flex gap-2">
+        <button onclick="window.print()" class="btn-ems btn-outline-ems"><i class="fas fa-print me-1"></i> Print Slip</button>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+</body>
+</html>
